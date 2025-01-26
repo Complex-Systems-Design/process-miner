@@ -25,8 +25,23 @@ Ensure that the following requirements are met:
         ```
 
 
-python manage.py shell
+### 1.2) Prepare and run Django
+1. Apply the Django migrations (create database schema):
+    ```bash
+    python3.13 manage.py migrate
+    ```
+2. Create a test user, necessary for authentication:
+    ```bash
+    python3.13 manage.py shell
 
-from django.contrib.auth.models import User
+    from django.contrib.auth.models import User
 
-User.objects.create_user(username='user', email='testuser@example.com', password='user')
+    User.objects.create_user(username='user', email='testuser@example.com', password='user')
+    ```
+    If successful, leave the Django management shell.
+
+3. Start the webserver:
+    ```bash
+    python3.13 manage.py runserver
+    ```
+    If successful, access the app under http://localhost:8000/app/
