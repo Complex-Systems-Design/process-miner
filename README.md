@@ -4,7 +4,6 @@ All commands outlined in this chapter must be run from the root directory of thi
 ### 1.1) Prerequisites
 Ensure that the following requirements are met:
 - Installed [Python v3.13](https://www.python.org/downloads/release/python-3130)
-
 - (Optional, but highly recommended) A Python virtual environment (venv). To do so, proceed as follows:
     1. Create the Python virtual environment named venv:
         ```bash
@@ -24,7 +23,6 @@ Ensure that the following requirements are met:
         python3.13 -m pip install -r requirements.txt
         ```
 
-
 ### 1.2) Prepare and run Django
 1. Apply the Django migrations (create database schema):
     ```bash
@@ -38,8 +36,7 @@ Ensure that the following requirements are met:
 
     User.objects.create_user(username='user', email='testuser@example.com', password='user')
     ```
-    If successful, leave the Django management shell.
-
+    If successful, leave the Django management shell (ctrl + d).
 3. Start the webserver:
     ```bash
     python3.13 manage.py runserver
