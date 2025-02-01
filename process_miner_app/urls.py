@@ -11,5 +11,6 @@ urlpatterns = [
     path('error/', views.error, name='error_page'),
     path('inputHandler/', views.input_handler, name='input_handler'),
     path('outputHandler/', views.output_handler, name='output_handler'),
+    path('downloadHandler/<str:filename>/', views.downloadHandler, name='download_handler'),
     path('logout/', views.logout_handler, name='logout_handler')
 ]
