@@ -93,7 +93,9 @@ def input_handler(request: HttpRequest) -> HttpResponse:
         unzip()
 
         # TODO, implement pipeline from Lukas, try except
-        sleep(1)
+        ml_algorithm_mock()
+        
+        # sleep(1)
 
         return redirect('process_miner_app:output_handler')
 
