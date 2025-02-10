@@ -6,7 +6,6 @@ import shutil
 from django.http import HttpResponse, HttpRequest, FileResponse, Http404
 from django.shortcuts import render, redirect
 from django.conf import settings
-from django.contrib import messages
 from django.urls import reverse
 from urllib.parse import urlencode
 
