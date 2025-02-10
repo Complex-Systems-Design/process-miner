@@ -4,8 +4,10 @@ Module to mock behaviour of machine learning algorithm TO BE REPLACED
 
 from django.conf import settings
 
+from ml_bl.preprocessing.pipelines import load_tale_data_from_raw_files, preprocess_manual_preparation
 import zipfile
 import os
+import joblib
 
 # use to get MEDIA_ROOT
 # os.path.join(settings.MEDIA_ROOT)
@@ -23,9 +25,34 @@ def ml_algorithm_mock() -> str:
     returns
         value (str): Sample string
     '''
-    value = 'Hello World!'
+    print("Preprocessing data...")
 
-    return value
+    # get media folder path
+    data_path = os.path.join(settings.MEDIA_ROOT, 'processed')
+    raw_data = load_tale_data_from_raw_files(data_path)
+    test_data = preprocess_manual_preparation(raw_data, train=False)
+    test_X = test_data.to_numpy()
+
+    print(len(raw_data))
+    print(len(test_data))
+    print("Data preprocessed")
+
+
+    # load the model frin the model folder in the ml_bl folder the joblib file
+    print("Loading model...")
+    model_path = os.path.join(settings.BASE_DIR, 'ml_bl', 'models', 'decision_tree_classifier.joblib')
+    model = joblib.load(model_path)
+    print("Model loaded")
+
+    predictions = model.predict(test_X)
+
+    raw_data['prediction'] = predictions
+    
+    # save the predictions to a csv file in media folder and make sure folder exists
+    os.makedirs(os.path.join(settings.MEDIA_ROOT, 'downloads'), exist_ok=True)
+    raw_data.to_csv(os.path.join(settings.MEDIA_ROOT, 'downloads', 'output.csv'), index=False)
+
+    return "final prediction"
 
 
 def unzip():
