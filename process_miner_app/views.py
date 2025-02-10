@@ -6,6 +6,9 @@ import shutil
 from django.http import HttpResponse, HttpRequest, FileResponse, Http404
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.contrib import messages
+from django.urls import reverse
+from urllib.parse import urlencode
 
 # importing authenticate function for User authentication
 # if authentication is successful, User object is returned, None otherwise
@@ -79,7 +82,7 @@ def input_handler(request: HttpRequest) -> HttpResponse:
         file = request.FILES['fileUpload']
 
         # prepare full_path, necessary to make sure, directory exists
-        # hardcode upload.zip, as only zip uplaod is possible, no need to extract file extension
+        # hardcode upload.zip, πas only zip uplaod is possible, no need to extract file extension
         file_path = os.path.join(settings.MEDIA_ROOT, 'uploads', 'upload.zip')
         # make sure, directory exists
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -93,11 +96,14 @@ def input_handler(request: HttpRequest) -> HttpResponse:
         unzip()
 
         # TODO, implement pipeline from Lukas, try except
-        ml_algorithm_mock()
+        output_file_name = ml_algorithm_mock()
         
-        # sleep(1)
+        # Build the URL with the filename as a query parameter
+        url = reverse('process_miner_app:output_handler')
+        query_string = urlencode({'filename': output_file_name})
+        url_with_query = f"{url}?{query_string}"
 
-        return redirect('process_miner_app:output_handler')
+        return redirect(url_with_query)
 
 def output_handler(request: HttpRequest) -> HttpResponse:
     '''
@@ -107,7 +113,14 @@ def output_handler(request: HttpRequest) -> HttpResponse:
         Returns:
             HttpResponse:   
     '''
-    return render(request, 'process_miner_app/file_download.html')
+
+    filename = request.GET.get('filename', '')
+
+    context = {
+        'filename': filename
+    }
+
+    return render(request, 'process_miner_app/file_download.html', context)
 
 def downloadHandler(request: HttpRequest, filename: str) -> FileResponse:
     '''
