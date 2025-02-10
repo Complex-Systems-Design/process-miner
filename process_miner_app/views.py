@@ -107,13 +107,8 @@ def input_handler(request: HttpRequest) -> HttpResponse:
         
         # Store the output file name in the session
         request.session['output_file'] = output_file_name
-        
-        # Build the URL with the filename as a query parameter
-        url = reverse('process_miner_app:output_handler')
-        query_string = urlencode({'filename': output_file_name})
-        url_with_query = f"{url}?{query_string}"
 
-        return redirect(url_with_query)
+        return redirect("process_miner_app:output_handler")
 
 def output_handler(request: HttpRequest) -> HttpResponse:
     '''
@@ -124,7 +119,7 @@ def output_handler(request: HttpRequest) -> HttpResponse:
             HttpResponse:   
     '''
 
-    filename = request.GET.get('filename', '')
+    filename = request.session.get('output_file')
 
     context = {
         'filename': filename
