@@ -12,7 +12,7 @@
 
 ## 1) Introduction
 ### 1.1 Project Description
-The main goal of this project is to develop a tool (in the form of a webapp) to transform robotic raw data (aka. low-level events) - such as position, velocity, or status information - into meaningful events (aka. high-level events) that support informed decision-making in robotic applications.
+The main goal of this project is to develop a tool (in the form of a webapp) to transform robotic raw sensor data (aka. low-level events) - such as position, velocity, or status information - into meaningful events (aka. high-level events) that support informed decision-making in robotic applications.
 
 The project leverages the TALE (Tag-Based Multi-Perspective Methodology) dataset, specifically designed for robotic smart agriculture scenarios.
 
@@ -114,20 +114,15 @@ Once the steps outlined in sections [3.1](#31-prerequisites)-[3.2](#32-prepare-a
 To transform raw data (aka. low-level events) into meaningful events (aka. high-level events), follow the subsequent steps:
 1. Navigate to the webapp GUI -> log in with the credentials defined in section [3.2](#32-prepare-and-run-django)
 2. Select the raw data (TALE dataset, .zip format) by selecting the desired file via explorer or using drag and drop. Upload.
-3. 
-4. 
-5. 
+3. Be patient - it may take some time to process the data. Once it has been processed, there are three ways to proceed:
+    - Download File: Download the result of the data transformation (.csv)
+    - Proces another File: Perform further processing
+    - Log out: Self-explanatory
 
 An overview of the points described above is provided by the following recording:
 <div align="center">
-  <img src="docs/recordings/create.gif" alt="recording_create">
+  <img src="docs/recordings/usage.gif" alt="recording_create">
 </div>
-
-
-
-
-
-
 
 ## 5) Future Work
 ### 5.1 Processing-Pipeline-Related Suggestions/Improvements
