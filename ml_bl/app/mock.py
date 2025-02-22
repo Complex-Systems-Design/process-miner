@@ -8,6 +8,7 @@ from ml_bl.preprocessing.pipelines import load_tale_data_from_raw_files, preproc
 import zipfile
 import os
 import joblib
+from datetime import datetime
 
 # use to get MEDIA_ROOT
 # os.path.join(settings.MEDIA_ROOT)
@@ -50,9 +51,13 @@ def ml_algorithm_mock() -> str:
     
     # save the predictions to a csv file in media folder and make sure folder exists
     os.makedirs(os.path.join(settings.MEDIA_ROOT, 'downloads'), exist_ok=True)
-    raw_data.to_csv(os.path.join(settings.MEDIA_ROOT, 'downloads', 'output.csv'), index=False)
+    
+    timestamp = datetime.now().strftime('%Y%m%d-%H%M%S.%f')
+    output_filename = f'output_{timestamp}.csv'
 
-    return "final prediction"
+    raw_data.to_csv(os.path.join(settings.MEDIA_ROOT, 'downloads', output_filename), index=False)
+
+    return output_filename
 
 
 def unzip():

@@ -6,6 +6,8 @@ import shutil
 from django.http import HttpResponse, HttpRequest, FileResponse, Http404
 from django.shortcuts import render, redirect
 from django.conf import settings
+from django.urls import reverse
+from urllib.parse import urlencode
 
 # importing authenticate function for User authentication
 # if authentication is successful, User object is returned, None otherwise
@@ -70,6 +72,14 @@ def input_handler(request: HttpRequest) -> HttpResponse:
     '''
     # Handle GET requests
     if request.method == 'GET':
+        # Retrieve the filename from the session if it exists
+        previous_output_file_name = request.session.get('output_file', None)
+        if previous_output_file_name:
+            # Try to delete the file
+            file_path = os.path.join(settings.MEDIA_ROOT, 'downloads', previous_output_file_name)
+            delete_file(file_path)
+            del request.session['output_file']
+
         return render(request, 'process_miner_app/file_upload.html')
     
     # Handle POST requests (form submit events)
@@ -79,7 +89,7 @@ def input_handler(request: HttpRequest) -> HttpResponse:
         file = request.FILES['fileUpload']
 
         # prepare full_path, necessary to make sure, directory exists
-        # hardcode upload.zip, as only zip uplaod is possible, no need to extract file extension
+        # hardcode upload.zip, πas only zip uplaod is possible, no need to extract file extension
         file_path = os.path.join(settings.MEDIA_ROOT, 'uploads', 'upload.zip')
         # make sure, directory exists
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -93,11 +103,12 @@ def input_handler(request: HttpRequest) -> HttpResponse:
         unzip()
 
         # TODO, implement pipeline from Lukas, try except
-        ml_algorithm_mock()
+        output_file_name = ml_algorithm_mock()
         
-        # sleep(1)
+        # Store the output file name in the session
+        request.session['output_file'] = output_file_name
 
-        return redirect('process_miner_app:output_handler')
+        return redirect("process_miner_app:output_handler")
 
 def output_handler(request: HttpRequest) -> HttpResponse:
     '''
@@ -107,7 +118,14 @@ def output_handler(request: HttpRequest) -> HttpResponse:
         Returns:
             HttpResponse:   
     '''
-    return render(request, 'process_miner_app/file_download.html')
+
+    filename = request.session.get('output_file')
+
+    context = {
+        'filename': filename
+    }
+
+    return render(request, 'process_miner_app/file_download.html', context)
 
 def downloadHandler(request: HttpRequest, filename: str) -> FileResponse:
     '''
@@ -135,24 +153,19 @@ def logout_handler(request: HttpRequest) -> HttpResponse:
         Returns:
             HttpResponse:   
     '''
+    # Delete the existing output file if it exists
+    if 'output_file' in request.session:
+        output_file_path = os.path.join(settings.MEDIA_ROOT, 'downloads', request.session['output_file'])
+        delete_file(output_file_path)
+        del request.session['output_file']
+        
     logout(request)
 
-    # when logout is performed, make sure media directory is cleaned
-    file_path = os.path.join(settings.MEDIA_ROOT)
-
-    for filename in os.listdir(file_path):
-        file_path_item = os.path.join(file_path, filename)
-
-        try:
-            if os.path.isfile(file_path_item) or os.path.islink(file_path_item):
-                # making sure, instead of os.remove(), that also links can be removed, with os.unlink(), not only files
-                os.unlink(file_path_item)
-                print('unlink')
-            elif os.path.isdir(file_path_item):
-                shutil.rmtree(file_path_item)
-                print('remove tree')
-        
-        except Exception as e:
-            print('error %s', e)
-
     return redirect('process_miner_app:index')
+
+def delete_file(file_path):
+    try:
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+    except FileNotFoundError:
+        pass
