@@ -17,7 +17,7 @@ The main goal of this project is to develop a tool (in the form of a webapp) to 
 The project leverages the TALE (Tag-Based Multi-Perspective Methodology) dataset, specifically designed for robotic smart agriculture scenarios.
 
 ### 1.2 Processing Approach
---> LUKAS, short description of processing approach, including data preprocessing, evtl. Dynamic view hier rein? Wenn du eine Grafik einfügst, bitte Nummerierung meiner Grafik unten und allenfalls auch Referenzen anpassen.
+This project utilizes a Decision Tree Classifier and a manually crafted preprocessing pipeline to load and process the data. First, it loads all relevant files from the input run that shall be predicted. Next, the loaded files are merged and enhanced with specially crafted feature transformations. After that, the decision tree model is loaded from a .joblib file and used for the prediction using the scikit-learn library. Finally, the predictions are stored alongside the raw data as a file for retrieval.
 
 ## 2) Software Architecture
 ### 2.1) Architecture & Components
@@ -126,8 +126,10 @@ An overview of the points described above is provided by the following recording
 
 ## 5) Future Work
 ### 5.1 Processing-Pipeline-Related Suggestions/Improvements
--> LUKAS
-- **Suggestion/Improvement 01**: XXXX
+- **Suggestion/Improvement 01**: The current version of this system utilizes a decision tree classifier. This is likely not the best model for predicting the high-level event abstractions. A better suited model for sequential tasks could be implemented here. While a better model was developed in a seperate repository, it was not implemented yet within this environment.
+- **Suggestion/Improvement 02**: At the moment, this solution only supports the TALE dataset with a very specific data structure. The data processing is only available for this structure and will fail for other robotic datasets. A possible improvement for the future would be to support famous robotic datasets or have an adaptive preparation algorithm that can handle different data types and structures automatically. 
+- **Suggestion/Improvement 03**: The output of the processing pipeline is only the expanded raw data with the predicted high-level activity. Especially with a Decision Tree Classifier, it is possible to further output the specific rules of the tree to the user for the explainability. It could be crucial to the user to know why the model behaves in a certain way.
+- **Suggestion/Imrovement 04**: Only one model is available and it has been trained in a seperate environment. Users of this application might want to test and train new models directly within this application to find new insights and experiment with their own data and available models.  
 
 ### 5.2 Infrastructure-Related Suggestions/Improvements
 - **Suggestion/Improvement 01**: Considering a stable production environment, a production-ready web server (e.g., Gunicorn, multiple process, multiple threads) must be used.
